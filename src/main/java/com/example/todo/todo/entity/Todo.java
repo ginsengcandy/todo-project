@@ -5,8 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
 @Table(name = "todos")
@@ -20,6 +18,11 @@ public class Todo extends BaseEntity{
 
     public Todo(String username, String title, String content) {
         this.username = username;
+        this.title = title;
+        this.content = content;
+    }
+
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
     }
