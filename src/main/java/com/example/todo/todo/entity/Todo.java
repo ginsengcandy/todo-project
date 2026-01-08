@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class Todo extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
     private String title;
     private String content;
     //사용자가 있어야만 일정이 존재할 수 있다
@@ -20,8 +19,7 @@ public class Todo extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Todo(String username, String title, String content, User user) {
-        this.username = username;
+    public Todo(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;

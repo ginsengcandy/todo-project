@@ -6,14 +6,12 @@ import java.time.LocalDateTime;
 @Getter
 public class CreateTodoResponse {
     private final Long id;
-    private final String username;
     private final String title;
     private final String content;
     private final LocalDateTime createdAt;
 
-    public CreateTodoResponse(Long id, String username, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CreateTodoResponse(Long id, String title, String content, LocalDateTime createdAt) {
         this.id = id;
-        this.username = username;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;

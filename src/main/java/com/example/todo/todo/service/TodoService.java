@@ -23,7 +23,6 @@ public class TodoService {
                 () -> new IllegalStateException("사용자가 존재하지 않습니다.")
         );
         Todo todo = new Todo(
-                request.getUsername(),
                 request.getTitle(),
                 request.getContent(),
                 user
@@ -31,11 +30,9 @@ public class TodoService {
         Todo savedTodo = todoRepository.save(todo);
         return new CreateTodoResponse(
                 savedTodo.getId(),
-                savedTodo.getUsername(),
                 savedTodo.getTitle(),
                 savedTodo.getContent(),
-                savedTodo.getCreatedAt(),
-                savedTodo.getModifiedAt()
+                savedTodo.getCreatedAt()
                 );
     }
 
@@ -47,7 +44,6 @@ public class TodoService {
         );
         return new GetTodoResponse(
                 todo.getId(),
-                todo.getUsername(),
                 todo.getTitle(),
                 todo.getContent(),
                 todo.getCreatedAt(),
@@ -63,7 +59,6 @@ public class TodoService {
         return todos.stream()
                 .map(todo -> new GetTodoResponse(
                         todo.getId(),
-                        todo.getUsername(),
                         todo.getTitle(),
                         todo.getContent(),
                         todo.getCreatedAt(),
@@ -81,7 +76,6 @@ public class TodoService {
         );
         return new UpdateTodoResponse(
                 todo.getId(),
-                todo.getUsername(),
                 todo.getTitle(),
                 todo.getContent(),
                 todo.getCreatedAt(),

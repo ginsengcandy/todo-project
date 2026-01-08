@@ -18,7 +18,8 @@ public class UserService {
     public CreateUserResponse create(CreateUserRequest request) {
     User user = new User(
             request.getUsername(),
-            request.getEmail()
+            request.getEmail(),
+            request.getPassword()
     );
     User savedUser = userRepository.save(user);
     return new CreateUserResponse(
@@ -63,7 +64,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("사용자가 존재하지 않습니다.")
         );
-        user.update(request.getUsername(), request.getEmail());
+        user.update(request.getUsername(), request.getEmail(), request.getPassword());
         return new UpdateUserResponse(
                 user.getId(),
                 user.getUsername(),
@@ -75,7 +76,7 @@ public class UserService {
 
     @Transactional
     public void delete(Long userId) {
-        Boolean existence = userRepository.existsById(userId);
+        boolean existence = userRepository.existsById(userId);
         if(!existence) throw new IllegalStateException("사용자가 존재하지 않습니다.");
         userRepository.deleteById(userId);
     }

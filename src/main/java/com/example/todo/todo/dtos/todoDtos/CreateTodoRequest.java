@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class CreateTodoRequest {
-    private String username;
     private String title;
     private String content;
 }
