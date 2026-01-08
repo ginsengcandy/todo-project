@@ -10,6 +10,8 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -43,5 +45,19 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getModifiedAt()
         );
+    }
+
+    @Transactional(readOnly=true)
+    public List<GetUserResponse> getAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new GetUserResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getCreatedAt(),
+                        user.getModifiedAt()
+                )
+                ).toList();
     }
 }
