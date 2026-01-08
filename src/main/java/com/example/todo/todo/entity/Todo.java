@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 public class Todo extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String content;
     //사용자가 있어야만 일정이 존재할 수 있다
     @ManyToOne(fetch = FetchType.LAZY)

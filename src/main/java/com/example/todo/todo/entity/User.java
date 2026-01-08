@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 public class User extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(length = 8, nullable = false)
     private String password;
 
     public User(String username, String email, String password){
