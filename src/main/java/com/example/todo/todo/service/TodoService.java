@@ -2,7 +2,9 @@ package com.example.todo.todo.service;
 
 import com.example.todo.todo.dtos.todoDtos.*;
 import com.example.todo.todo.entity.Todo;
+import com.example.todo.todo.entity.User;
 import com.example.todo.todo.repository.TodoRepository;
+import com.example.todo.todo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,13 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TodoService {
     private final TodoRepository todoRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public CreateTodoResponse save(CreateTodoRequest request){
+    public CreateTodoResponse save(Long userId, CreateTodoRequest request){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+        );
         Todo todo = new Todo(
                 request.getUsername(),
                 request.getTitle(),
-                request.getContent());
+                request.getContent(),
+                user
+        );
         Todo savedTodo = todoRepository.save(todo);
         return new CreateTodoResponse(
                 savedTodo.getId(),
@@ -47,8 +55,11 @@ public class TodoService {
         );
     }
     @Transactional(readOnly=true)
-    public List<GetTodoResponse> findAll() {
-        List<Todo> todos = todoRepository.findAll();
+    public List<GetTodoResponse> findAll(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+        );
+        List<Todo> todos = todoRepository.findByUser(user);
         return todos.stream()
                 .map(todo -> new GetTodoResponse(
                         todo.getId(),

@@ -14,11 +14,12 @@ import java.util.List;
 public class TodoController {
     private final TodoService todoService;
     //일정 생성
-    @PostMapping("/todos")
+    @PostMapping("/users/{userId}/todos")
     public ResponseEntity<CreateTodoResponse> create(
+            @PathVariable Long userId,
             @RequestBody CreateTodoRequest request
     ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.save(userId, request));
     }
     //단건 조회
     @GetMapping("/todos/{todoId}")
@@ -28,9 +29,11 @@ public class TodoController {
     }
 
     //전체 조회
-    @GetMapping("/todos")
-    public ResponseEntity<List<GetTodoResponse>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.findAll());
+    @GetMapping("/users/{userId}/todos")
+    public ResponseEntity<List<GetTodoResponse>> getAll(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.findAll(userId));
     }
 
     @PutMapping("/todos/{todoId}")
