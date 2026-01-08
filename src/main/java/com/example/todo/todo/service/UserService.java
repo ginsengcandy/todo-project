@@ -1,9 +1,15 @@
 package com.example.todo.todo.service;
 
+import com.example.todo.todo.dtos.loginDtos.LoginRequest;
+import com.example.todo.todo.dtos.loginDtos.LoginResponse;
+import com.example.todo.todo.dtos.loginDtos.SessionUser;
 import com.example.todo.todo.dtos.userDtos.*;
 import com.example.todo.todo.entity.User;
 import com.example.todo.todo.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,5 +85,24 @@ public class UserService {
         boolean existence = userRepository.existsById(userId);
         if(!existence) throw new IllegalStateException("사용자가 존재하지 않습니다.");
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public LoginResponse login(@Valid LoginRequest request, HttpSession session) {
+        LoginResponse loginResponse = loginValidate(request);
+        SessionUser sessionUser = new SessionUser(loginResponse.getId(), loginResponse.getEmail());
+        session.setAttribute("loginUser", sessionUser);
+        return loginResponse;
+    }
+
+    private LoginResponse loginValidate(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
+
+        if (!request.getPassword().equals(user.getPassword())) {
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        return new LoginResponse(user.getId(), user.getEmail());
     }
 }

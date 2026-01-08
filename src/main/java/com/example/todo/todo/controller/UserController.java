@@ -1,11 +1,16 @@
 package com.example.todo.todo.controller;
 
+import com.example.todo.todo.dtos.loginDtos.LoginRequest;
+import com.example.todo.todo.dtos.loginDtos.LoginResponse;
+import com.example.todo.todo.dtos.loginDtos.SessionUser;
 import com.example.todo.todo.dtos.userDtos.*;
 import com.example.todo.todo.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -13,6 +18,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request, HttpSession session){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.login(request, session));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            HttpSession session) {
+
+        if (sessionUser == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        session.invalidate();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
     @PostMapping("/users")
     public ResponseEntity<CreateUserResponse> create(
