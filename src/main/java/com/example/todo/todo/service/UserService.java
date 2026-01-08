@@ -1,12 +1,9 @@
 package com.example.todo.todo.service;
 
-import com.example.todo.todo.dtos.userDtos.CreateUserRequest;
-import com.example.todo.todo.dtos.userDtos.CreateUserResponse;
-import com.example.todo.todo.dtos.userDtos.GetUserResponse;
+import com.example.todo.todo.dtos.userDtos.*;
 import com.example.todo.todo.entity.User;
 import com.example.todo.todo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +56,20 @@ public class UserService {
                         user.getModifiedAt()
                 )
                 ).toList();
+    }
+
+    @Transactional
+    public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+        );
+        user.update(request.getUsername(), request.getEmail());
+        return new UpdateUserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getModifiedAt()
+        );
     }
 }

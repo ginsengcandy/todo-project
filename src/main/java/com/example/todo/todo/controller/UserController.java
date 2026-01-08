@@ -1,8 +1,6 @@
 package com.example.todo.todo.controller;
 
-import com.example.todo.todo.dtos.userDtos.CreateUserRequest;
-import com.example.todo.todo.dtos.userDtos.CreateUserResponse;
-import com.example.todo.todo.dtos.userDtos.GetUserResponse;
+import com.example.todo.todo.dtos.userDtos.*;
 import com.example.todo.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,5 +29,13 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<GetUserResponse>> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
+    }
+
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<UpdateUserResponse> update(
+            @PathVariable Long userId,
+            @RequestBody UpdateUserRequest request
+    ){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
     }
 }
