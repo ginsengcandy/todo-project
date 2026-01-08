@@ -10,7 +10,6 @@ public class CreateTodoResponse {
     private final String title;
     private final String content;
     private final LocalDateTime createdAt;
-    private final LocalDateTime modifiedAt;
 
     public CreateTodoResponse(Long id, String username, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
@@ -18,6 +17,5 @@ public class CreateTodoResponse {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 }

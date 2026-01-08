@@ -22,7 +22,7 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(todoService.save(userId, request));
     }
     //단건 조회
-    @GetMapping("/todos/{todoId}")
+    @GetMapping("/users/{userId}/todos/{todoId}")
     public ResponseEntity<GetTodoResponse> search(
             @PathVariable Long todoId) {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.findOne(todoId));
@@ -36,14 +36,14 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.findAll(userId));
     }
 
-    @PutMapping("/todos/{todoId}")
+    @PutMapping("/users/{userId}/todos/{todoId}")
     public ResponseEntity<UpdateTodoResponse> update(
             @PathVariable Long todoId,
             @RequestBody UpdateTodoRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.update(todoId, request));
     }
 
-    @DeleteMapping("/todos/{todoId}")
+    @DeleteMapping("/users/{userId}/todos/{todoId}")
     public ResponseEntity<Void> delete(@PathVariable Long todoId){
         todoService.delete(todoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
