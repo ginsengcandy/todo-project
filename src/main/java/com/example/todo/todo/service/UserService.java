@@ -1,5 +1,6 @@
 package com.example.todo.todo.service;
 
+import com.example.todo.config.PasswordEncoder;
 import com.example.todo.todo.dtos.loginDtos.LoginRequest;
 import com.example.todo.todo.dtos.loginDtos.LoginResponse;
 import com.example.todo.todo.dtos.loginDtos.SessionUser;
@@ -22,10 +23,11 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse create(CreateUserRequest request) {
+        PasswordEncoder passwordEncoder = new PasswordEncoder();
         User user = new User(
                 request.getUsername(),
                 request.getEmail(),
-                request.getPassword()
+                passwordEncoder.encode(request.getPassword())
         );
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
@@ -98,8 +100,8 @@ public class UserService {
     private LoginResponse loginValidate(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
-
-        if (!request.getPassword().equals(user.getPassword())) {
+        PasswordEncoder passwordEncoder = new PasswordEncoder();
+        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
 
