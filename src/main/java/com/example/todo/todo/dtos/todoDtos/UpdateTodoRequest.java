@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class UpdateTodoRequest {
-    //제목, 내용만 바꿀 수 있음
     @NotBlank(message = "필수 입력 항목입니다.")
     @Size(max = 20, message = "글자 수 초과(20자)")
     private String title;

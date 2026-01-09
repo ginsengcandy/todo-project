@@ -16,7 +16,7 @@ public class User extends BaseEntity {
     private String username;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(length = 15, nullable = false)
+    @Column(nullable = false) //length: 기본값(255)로 설정
     private String password;
 
     public User(String username, String email, String password){
