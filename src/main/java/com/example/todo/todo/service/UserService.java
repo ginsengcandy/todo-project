@@ -1,6 +1,8 @@
 package com.example.todo.todo.service;
 
 import com.example.todo.config.PasswordEncoder;
+import com.example.todo.customErrors.PasswordMismatchException;
+import com.example.todo.customErrors.UserNotFoundException;
 import com.example.todo.todo.dtos.loginDtos.LoginRequest;
 import com.example.todo.todo.dtos.loginDtos.LoginResponse;
 import com.example.todo.todo.dtos.loginDtos.SessionUser;
@@ -10,7 +12,6 @@ import com.example.todo.todo.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,10 +100,10 @@ public class UserService {
 
     private LoginResponse loginValidate(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 이메일입니다."));
         PasswordEncoder passwordEncoder = new PasswordEncoder();
         if (!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
+            throw new PasswordMismatchException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
 
         return new LoginResponse(user.getId(), user.getEmail());
