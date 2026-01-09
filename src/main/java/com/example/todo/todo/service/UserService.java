@@ -22,19 +22,19 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse create(CreateUserRequest request) {
-    User user = new User(
-            request.getUsername(),
-            request.getEmail(),
-            request.getPassword()
-    );
-    User savedUser = userRepository.save(user);
-    return new CreateUserResponse(
-            savedUser.getId(),
-            savedUser.getUsername(),
-            savedUser.getEmail(),
-            savedUser.getCreatedAt(),
-            savedUser.getModifiedAt()
-    );
+        User user = new User(
+                request.getUsername(),
+                request.getEmail(),
+                request.getPassword()
+        );
+        User savedUser = userRepository.save(user);
+        return new CreateUserResponse(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail(),
+                savedUser.getCreatedAt(),
+                savedUser.getModifiedAt()
+        );
     }
 
     @Transactional(readOnly=true)

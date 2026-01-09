@@ -40,7 +40,7 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<CreateUserResponse> create(
-            @RequestBody CreateUserRequest request){
+            @Valid @RequestBody CreateUserRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
     //단건조회
