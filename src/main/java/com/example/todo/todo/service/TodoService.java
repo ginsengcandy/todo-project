@@ -1,5 +1,7 @@
 package com.example.todo.todo.service;
 
+import com.example.todo.customErrors.TodoNotFoundException;
+import com.example.todo.customErrors.UserNotFoundException;
 import com.example.todo.todo.dtos.todoDtos.*;
 import com.example.todo.todo.entity.Todo;
 import com.example.todo.todo.entity.User;
@@ -20,7 +22,7 @@ public class TodoService {
     @Transactional
     public CreateTodoResponse save(Long userId, CreateTodoRequest request){
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+                UserNotFoundException::new
         );
         Todo todo = new Todo(
                 request.getTitle(),
@@ -40,7 +42,7 @@ public class TodoService {
     @Transactional(readOnly=true)
     public GetTodoResponse findOne(Long todoId) {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalStateException("일정이 존재하지 않습니다.")
+                TodoNotFoundException::new
         );
         return new GetTodoResponse(
                 todo.getId(),
@@ -53,7 +55,7 @@ public class TodoService {
     @Transactional(readOnly=true)
     public List<GetTodoResponse> findAll(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+                UserNotFoundException::new
         );
         List<Todo> todos = todoRepository.findByUser(user);
         return todos.stream()
@@ -68,7 +70,7 @@ public class TodoService {
     @Transactional
     public UpdateTodoResponse update(Long todoId, UpdateTodoRequest request) {
         Todo todo = todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalStateException("일정이 존재하지 않습니다.")
+                TodoNotFoundException::new
         );
         todo.update(
                 request.getTitle(),
@@ -82,11 +84,11 @@ public class TodoService {
                 todo.getModifiedAt()
         );
     }
-
+    @Transactional
     public void delete(Long todoId) {
         Boolean existence = todoRepository.existsById(todoId);
         if(!existence)
-            throw new IllegalStateException("게시글이 존재하지 않습니다.");
+            throw new TodoNotFoundException();
         todoRepository.deleteById(todoId);
     }
 }

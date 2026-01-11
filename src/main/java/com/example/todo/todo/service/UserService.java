@@ -43,7 +43,7 @@ public class UserService {
     @Transactional(readOnly=true)
     public GetUserResponse getOne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+               UserNotFoundException::new
         );
         return new GetUserResponse(
                 user.getId(),
@@ -71,7 +71,7 @@ public class UserService {
     @Transactional
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("사용자가 존재하지 않습니다.")
+                UserNotFoundException::new
         );
         user.update(request.getUsername(), request.getEmail(), request.getPassword());
         return new UpdateUserResponse(
@@ -86,7 +86,7 @@ public class UserService {
     @Transactional
     public void delete(Long userId) {
         boolean existence = userRepository.existsById(userId);
-        if(!existence) throw new IllegalStateException("사용자가 존재하지 않습니다.");
+        if(!existence) throw new UserNotFoundException();
         userRepository.deleteById(userId);
     }
 
@@ -103,7 +103,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 이메일입니다."));
         PasswordEncoder passwordEncoder = new PasswordEncoder();
         if (!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-            throw new PasswordMismatchException("이메일 또는 비밀번호가 일치하지 않습니다.");
+            throw new PasswordMismatchException();
         }
 
         return new LoginResponse(user.getId(), user.getEmail());
