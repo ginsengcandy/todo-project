@@ -20,9 +20,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
-            @Valid @RequestBody LoginRequest request, HttpSession session){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.login(request, session));
+    public ResponseEntity<String> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpSession session){
+        LoginResponse loginResponse = userService.login(request);
+        SessionUser sessionUser = new SessionUser(loginResponse.getId(), loginResponse.getEmail());
+        session.setAttribute("loginUser", sessionUser);
+        return ResponseEntity.ok("success");
     }
 
     @PostMapping("/logout")
@@ -38,8 +42,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<CreateUserResponse> create(
+    @PostMapping("/signup")
+    public ResponseEntity<CreateUserResponse> signup(
             @Valid @RequestBody CreateUserRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }

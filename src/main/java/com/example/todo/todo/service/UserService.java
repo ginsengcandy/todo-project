@@ -91,10 +91,8 @@ public class UserService {
     }
 
     @Transactional
-    public LoginResponse login(@Valid LoginRequest request, HttpSession session) {
+    public LoginResponse login(@Valid LoginRequest request) {
         LoginResponse loginResponse = loginValidate(request);
-        SessionUser sessionUser = new SessionUser(loginResponse.getId(), loginResponse.getEmail());
-        session.setAttribute("loginUser", sessionUser);
         return loginResponse;
     }
 

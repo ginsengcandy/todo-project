@@ -228,7 +228,7 @@ src/main/java/com/example/todo/
 
 1. **저장소 클론**
 ```bash
-git clone 
+git clone https://github.com/ginsengcandy/todo-project.git
 cd todo
 ```
 

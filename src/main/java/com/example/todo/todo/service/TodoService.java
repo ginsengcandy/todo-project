@@ -1,7 +1,9 @@
 package com.example.todo.todo.service;
 
+import com.example.todo.customErrors.ForbiddenException;
 import com.example.todo.customErrors.TodoNotFoundException;
 import com.example.todo.customErrors.UserNotFoundException;
+import com.example.todo.todo.dtos.loginDtos.SessionUser;
 import com.example.todo.todo.dtos.todoDtos.*;
 import com.example.todo.todo.entity.Todo;
 import com.example.todo.todo.entity.User;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,8 +23,8 @@ public class TodoService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CreateTodoResponse save(Long userId, CreateTodoRequest request){
-        User user = userRepository.findById(userId).orElseThrow(
+    public CreateTodoResponse save(SessionUser sessionUser, CreateTodoRequest request){
+        User user = userRepository.findById(sessionUser.getId()).orElseThrow(
                 UserNotFoundException::new
         );
         Todo todo = new Todo(
@@ -37,7 +40,6 @@ public class TodoService {
                 savedTodo.getCreatedAt()
                 );
     }
-
     //단건조회
     @Transactional(readOnly=true)
     public GetTodoResponse findOne(Long todoId) {
@@ -52,8 +54,16 @@ public class TodoService {
                 todo.getModifiedAt()
         );
     }
+
     @Transactional(readOnly=true)
-    public List<GetTodoResponse> findAll(Long userId) {
+    public List<GetTodoResponse> find(Long userId) {
+        if(userId != null) {
+            return findByUser(userId);
+        }
+        return findAll();
+    }
+    //특정 유저의 모든 일정
+    private List<GetTodoResponse> findByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 UserNotFoundException::new
         );
@@ -67,11 +77,37 @@ public class TodoService {
                         todo.getModifiedAt()
                 )).toList();
     }
+    //모든 유저의 모든 일정
+    private List<GetTodoResponse> findAll(){
+        List<Todo> todos = todoRepository.findAll();
+        //방법 1 - List로 가져오기
+        List<GetTodoResponse> dtos = new ArrayList<>();
+        for (Todo todo : todos) {
+            dtos.add(new GetTodoResponse(
+                    todo.getId(),
+                    todo.getTitle(),
+                    todo.getContent(),
+                    todo.getCreatedAt(),
+                    todo.getModifiedAt()
+            ));
+        }
+        return dtos;
+    }
+
     @Transactional
-    public UpdateTodoResponse update(Long todoId, UpdateTodoRequest request) {
+    public UpdateTodoResponse update(SessionUser sessionUser, Long todoId, UpdateTodoRequest request) {
+        //세션유저가 DB상에 존재하는지 (방어적 코딩)
+        Boolean userExistence = userRepository.existsById(sessionUser.getId());
+        if(!userExistence) throw new UserNotFoundException();
+        //해당 id의 일정이 존재하는지
         Todo todo = todoRepository.findById(todoId).orElseThrow(
                 TodoNotFoundException::new
         );
+        //접근하고자 하는 유저가 일정을 등록한 유저와 동일한지 (접근 권한 확인)
+        if(!sessionUser.getId().equals(todo.getUser().getId())){
+            //실패
+            throw new ForbiddenException();
+        }
         todo.update(
                 request.getTitle(),
                 request.getContent()
@@ -85,10 +121,19 @@ public class TodoService {
         );
     }
     @Transactional
-    public void delete(Long todoId) {
-        Boolean existence = todoRepository.existsById(todoId);
-        if(!existence)
-            throw new TodoNotFoundException();
+    public void delete(SessionUser sessionUser, Long todoId) {
+        //세션유저가 DB상에 존재하는지 (방어적 코딩)
+        Boolean userExistence = userRepository.existsById(sessionUser.getId());
+        if(!userExistence) throw new UserNotFoundException();
+        //해당 id의 일정이 존재하는지
+        Todo todo = todoRepository.findById(todoId).orElseThrow(
+                TodoNotFoundException::new
+        );
+        //접근하고자 하는 유저가 일정을 등록한 유저와 동일한지 (접근 권한 확인)
+        if(!sessionUser.getId().equals(todo.getUser().getId())){
+            //실패
+            throw new ForbiddenException();
+        }
         todoRepository.deleteById(todoId);
     }
 }
