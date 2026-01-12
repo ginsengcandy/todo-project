@@ -58,18 +58,20 @@ public class UserController {
     public ResponseEntity<List<GetUserResponse>> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
     }
-
-    @PutMapping("/users/{userId}")
+    //사용자가 스스로 수정
+    @PutMapping("/users")
     public ResponseEntity<UpdateUserResponse> update(
-            @PathVariable Long userId,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @Valid @RequestBody UpdateUserRequest request
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(sessionUser, request));
     }
-
-    @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId){
-        userService.delete(userId);
+    //사용자가 스스로 삭제
+    @DeleteMapping("/users")
+    public ResponseEntity<Void> delete(
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
+    ){
+        userService.delete(sessionUser);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

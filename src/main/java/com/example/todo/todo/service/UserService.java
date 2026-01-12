@@ -69,8 +69,9 @@ public class UserService {
     }
 
     @Transactional
-    public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public UpdateUserResponse update(SessionUser sessionUser, UpdateUserRequest request) {
+        //세션유저가 DB상에 존재하는지 (방어적 코딩)
+        User user = userRepository.findById(sessionUser.getId()).orElseThrow(
                 UserNotFoundException::new
         );
         user.update(request.getUsername(), request.getEmail(), request.getPassword());
@@ -84,10 +85,11 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long userId) {
-        boolean existence = userRepository.existsById(userId);
-        if(!existence) throw new UserNotFoundException();
-        userRepository.deleteById(userId);
+    public void delete(SessionUser sessionUser) {
+        //세션유저가 DB상에 존재하는지 (방어적 코딩)
+        Boolean userExistence = userRepository.existsById(sessionUser.getId());
+        if(!userExistence) throw new UserNotFoundException();
+        userRepository.deleteById(sessionUser.getId());
     }
 
     @Transactional
