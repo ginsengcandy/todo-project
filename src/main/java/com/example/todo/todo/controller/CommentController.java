@@ -39,7 +39,7 @@ public class CommentController {
     //댓글 수정
     @PutMapping("/todos/{todoId}/comments/{commentId}")
     public ResponseEntity<UpdateCommentResponse> update(
-            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable Long commentId,
             @RequestBody UpdateCommentRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.update(sessionUser, commentId, request));
@@ -47,7 +47,7 @@ public class CommentController {
     //댓글 삭제
     @DeleteMapping("/todos/{todoId}/comments/{commentId}")
     public ResponseEntity<Void> delete(
-            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable Long commentId){
         commentService.delete(sessionUser, commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

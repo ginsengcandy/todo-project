@@ -40,7 +40,7 @@ public class TodoController {
 
     @PutMapping("/todos/{todoId}")
     public ResponseEntity<UpdateTodoResponse> update(
-            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable Long todoId,
             @RequestBody UpdateTodoRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.update(sessionUser, todoId, request));
@@ -48,7 +48,7 @@ public class TodoController {
 
     @DeleteMapping("/todos/{todoId}")
     public ResponseEntity<Void> delete(
-            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable Long todoId){
         todoService.delete(sessionUser, todoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

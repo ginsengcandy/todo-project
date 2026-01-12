@@ -81,6 +81,9 @@ public class CommentService {
 
     @Transactional
     public UpdateCommentResponse update(SessionUser sessionUser, Long commentId, UpdateCommentRequest request) {
+        //로그인 여부 확인
+        if(sessionUser == null)
+            throw new ForbiddenException();
         //세션유저가 DB상에 존재하는지 (방어적 코딩)
         Boolean userExistence = userRepository.existsById(sessionUser.getId());
         if(!userExistence) throw new UserNotFoundException();
@@ -105,6 +108,9 @@ public class CommentService {
 
     @Transactional
     public void delete(SessionUser sessionUser, Long commentId) {
+        //로그인되어있는지
+        if(sessionUser == null)
+            throw new ForbiddenException();
         //세션유저가 DB상에 존재하는지 (방어적 코딩)
         Boolean userExistence = userRepository.existsById(sessionUser.getId());
         if(!userExistence) throw new UserNotFoundException();

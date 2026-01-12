@@ -96,6 +96,8 @@ public class TodoService {
 
     @Transactional
     public UpdateTodoResponse update(SessionUser sessionUser, Long todoId, UpdateTodoRequest request) {
+        //로그인되어 있는지
+        if(sessionUser==null) throw new ForbiddenException();
         //세션유저가 DB상에 존재하는지 (방어적 코딩)
         Boolean userExistence = userRepository.existsById(sessionUser.getId());
         if(!userExistence) throw new UserNotFoundException();
@@ -122,6 +124,8 @@ public class TodoService {
     }
     @Transactional
     public void delete(SessionUser sessionUser, Long todoId) {
+        //로그인되어있는지
+        if(sessionUser==null) throw new ForbiddenException();
         //세션유저가 DB상에 존재하는지 (방어적 코딩)
         Boolean userExistence = userRepository.existsById(sessionUser.getId());
         if(!userExistence) throw new UserNotFoundException();
