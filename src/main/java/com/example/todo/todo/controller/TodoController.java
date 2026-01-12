@@ -3,6 +3,7 @@ package com.example.todo.todo.controller;
 import com.example.todo.todo.dtos.loginDtos.SessionUser;
 import com.example.todo.todo.dtos.todoDtos.*;
 import com.example.todo.todo.service.TodoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class TodoController {
 
     @PutMapping("/todos/{todoId}")
     public ResponseEntity<UpdateTodoResponse> update(
-            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long todoId,
             @RequestBody UpdateTodoRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.update(sessionUser, todoId, request));
@@ -47,7 +48,7 @@ public class TodoController {
 
     @DeleteMapping("/todos/{todoId}")
     public ResponseEntity<Void> delete(
-            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long todoId){
         todoService.delete(sessionUser, todoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -20,11 +20,15 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id", nullable = false)
     private Todo todo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Comment(String author, String content, Todo todo){
+    public Comment(String author, String content, Todo todo, User user){
         this.author = author;
         this.content = content;
         this.todo = todo;
+        this.user = user;
     }
 
     public void update(String content) {
